@@ -132,8 +132,10 @@ grant select, insert, update on public.profiles to authenticated;
 grant select, insert, update, delete on public.trips to authenticated;
 grant select, insert, update on public.connections to authenticated;
 
--- Optional helper view for destination/date exploration.
-create or replace view public.trip_network as
+-- Optional helper view. security_invoker keeps underlying RLS in force.
+create or replace view public.trip_network
+with (security_invoker = true)
+as
 select
   t.id,
   t.user_id,
