@@ -1,58 +1,171 @@
 # Travel Anchor
 
-P0 browser prototype for an **AI-native future travel network**.
+P0.3 prototype for an **AI-native future travel network**.
 
-The core product hypothesis is that a confirmed traveller can become an **Anchor** for people whose destination is known but whose dates are still flexible.
+The core hypothesis is that a confirmed traveller can become an **Anchor** for people who know where they want to go but have flexible dates.
 
-## What works in this prototype
+## Current architecture
 
-- Anonymous-first personas; no real account system required
-- Multiple test personas in one browser
-- Traveller profile + natural-language profile analysis prototype
+```text
+GitHub Pages
+  └─ browser UI
+      ├─ local test personas
+      ├─ Supabase anonymous auth + shared Postgres network
+      └─ Ask Travel Anchor
+             ↓
+          Render API
+             ↓
+     GitHub Copilot SDK
+             ↓
+        GPT-5.6 Luna
+```
+
+The app works in two modes:
+
+- **Local demo:** no setup required; multiple personas and trips live in `localStorage`.
+- **Shared network:** configure Supabase and the active browser becomes one anonymous network user. Profiles/trips become visible to other signed-in anonymous users according to RLS.
+
+## P0.3 functionality
+
+- Anonymous-first usage
+- Multiple local test personas
+- Traveller profile and structured travel preferences
 - `Interested / Flexible / Confirmed` trips
-- Destination timeline / density
-- Date + activity + travel-style matching
-- Compatibility score + confidence kept separate
-- Explainable match reasons and potential friction
-- Request / accept connection flow
-- Local social-proof field
-- Browser-local persistence with `localStorage`
+- Supabase anonymous auth
+- Shared profiles and trips
+- Row-level security
+- Destination timeline / traveller density
+- Date + activity + travel-style compatibility
+- Compatibility and confidence kept separate
+- Connection requests
+- Natural-language **Ask Travel Anchor** interface
+- Structured facts computed in the app before AI generation
+- GPT-5.6 Luna through GitHub Copilot SDK when the Render API is configured
+- Deterministic local fallback when AI is unavailable
 
-## Data architecture
+## 1. Supabase setup
 
-The current version intentionally has **no shared database**. All demo users, trips and connections live in `localStorage` in one browser.
+Create a free Supabase project.
 
-This is useful for product testing because one person can simulate Alice / Bob / Charles / Claire without creating accounts.
+Then:
 
-A real multi-user network will need a backend. The intended next step is likely:
+1. Enable **Anonymous Sign-Ins** under Authentication settings.
+2. Open the SQL editor.
+3. Run [`supabase/schema.sql`](./supabase/schema.sql).
+4. Copy these two browser-safe values from the project settings:
+   - Project URL
+   - Publishable key / anon key
 
-- Supabase / PostgreSQL for shared users, trips and connections
-- Anonymous auth first, then email magic-link account claim
-- Row-level security for profile/trip visibility
-- Server-side AI adapter for profile extraction, semantic reranking and match explanations
+Do **not** expose the `service_role` key.
 
-GitHub Pages can host the static frontend, but it **cannot safely hold an OpenAI API secret or act as the database/backend**.
+You can either put the public values in [`runtime-config.js`](./runtime-config.js), or use the **Setup** button in the app to store a browser-local override while testing.
 
-## AI architecture
+Example:
 
-P0 currently uses a deterministic local semantic prototype so the whole product is testable on GitHub Pages without exposing an API key.
+```js
+window.TRAVEL_ANCHOR_CONFIG = {
+  supabaseUrl: "https://xxxx.supabase.co",
+  supabasePublishableKey: "sb_publishable_...",
+  apiBaseUrl: "https://travel-anchor-api.onrender.com",
+  mode: "auto"
+};
+```
 
-Production flow should be:
+### Note about test personas
 
-1. Hard filters: destination, dates, privacy, blocks, explicit constraints
-2. Structured compatibility score
-3. Send only top candidates to a low-cost LLM
-4. LLM semantic rerank + explanation
-5. Store structured traveller vector so the full interview does not need to be reprocessed for every match
+Local personas are deliberately a developer convenience. In shared cloud mode, **one browser session represents one anonymous Supabase user**. Use another browser profile/incognito/device if you want to simulate multiple real cloud users.
 
-## Local use
+## 2. Render AI backend
 
-Open `index.html` directly, or serve the repository with any static server.
+The repository includes [`render.yaml`](./render.yaml).
 
-## GitHub Pages
+Create a Render Blueprint/Web Service from this repository. The service runs from `backend/` and exposes:
 
-`.github/workflows/pages.yml` contains the official Pages deployment workflow. For a new repository, GitHub may require a one-time setting:
+- `GET /health`
+- `POST /chat`
 
-**Settings → Pages → Build and deployment → Source → GitHub Actions**
+The backend uses `@github/copilot-sdk` and defaults to `gpt-5.6-luna`.
 
-After that, pushes to `main` deploy automatically.
+### Required Render secret
+
+Set:
+
+```text
+COPILOT_GITHUB_TOKEN=<your GitHub user token>
+```
+
+Do not commit this token and do not place it in `runtime-config.js`.
+
+The Copilot SDK currently supports OAuth user tokens, GitHub App user access tokens, and fine-grained personal access tokens. The GitHub identity behind the token must have access to the selected Copilot model.
+
+Optional environment variables:
+
+```text
+COPILOT_MODEL=gpt-5.6-luna
+ALLOWED_ORIGINS=https://hawtim.github.io
+COPILOT_LOG_LEVEL=warning
+```
+
+After Render deploys, copy its public `https://...onrender.com` URL into `runtime-config.js` as `apiBaseUrl`.
+
+## 3. How Ask Travel Anchor works
+
+The LLM is **not** the database or calculator.
+
+For a question such as:
+
+> 日本什么时候人比较多？
+
+The browser first computes structured context such as:
+
+```json
+{
+  "destinationScope": "Japan",
+  "density": [
+    {
+      "start": "2027-04-15",
+      "end": "2027-04-21",
+      "confirmed": 12,
+      "flexible": 8
+    }
+  ],
+  "topMatches": []
+}
+```
+
+Only that compact context and the user's question are sent to the Render API. Luna explains the result in natural language.
+
+This keeps model usage cheap and prevents the model from inventing the underlying travel graph.
+
+## 4. Privacy / trust principles
+
+- No real-time GPS
+- No exact hotel/room/flight location required
+- Social links are user-provided context, not proof of safety
+- Compatibility is personal; there is no global human score
+- Missing profile data lowers match confidence, not a person's status
+- AI must not produce a safety probability for a stranger
+
+## 5. Local development
+
+For the static frontend:
+
+```bash
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000`.
+
+For the AI backend:
+
+```bash
+cd backend
+npm install
+COPILOT_GITHUB_TOKEN=... npm start
+```
+
+The API defaults to port `10000` unless `PORT` is set.
+
+## Deployment
+
+GitHub Pages deployment is handled by the repository's GitHub Actions workflow. Render deployment is independent and can auto-deploy from the same `main` branch.
