@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>Travel Anchor — AI-native travel matching prototype</title>
+  <style>
+    :root{--bg:#f6f7fb;--surface:#fff;--surface2:#f0f3f9;--text:#172033;--muted:#667085;--line:#dfe3eb;--brand:#4f46e5;--brand2:#7c3aed;--ok:#0f9f6e;--warn:#b7791f;--danger:#c2415d;--shadow:0 14px 40px rgba(18,28,45,.08);--radius:18px}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#f9f9fd 0,#f4f6fb 100%);color:var(--text)}
+    button,input,select,textarea{font:inherit} button{cursor:pointer}.app{min-height:100vh}.shell{max-width:1180px;margin:0 auto;padding:0 20px 48px}
+    header{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);background:rgba(249,249,253,.88);border-bottom:1px solid rgba(223,227,235,.85)}
+    .topbar{max-width:1180px;margin:0 auto;height:68px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:11px;font-weight:760;letter-spacing:-.02em}.mark{width:34px;height:34px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;color:#fff;box-shadow:0 8px 22px rgba(79,70,229,.28)}
+    .top-actions{display:flex;align-items:center;gap:10px}.chip,.btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 13px;color:var(--text)}.chip{font-size:13px;color:var(--muted)}.btn{font-weight:650}.btn.primary{border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}.btn.ghost{background:transparent}.btn.small{padding:7px 10px;font-size:13px}.btn.danger{color:var(--danger)}
+    main{padding-top:28px}.hero{display:grid;grid-template-columns:1.3fr .7fr;gap:22px;align-items:stretch;margin-bottom:22px}.hero-card,.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.hero-card{padding:30px;background:radial-gradient(circle at 10% 10%,rgba(124,58,237,.12),transparent 34%),radial-gradient(circle at 90% 20%,rgba(79,70,229,.12),transparent 30%),#fff}.eyebrow{text-transform:uppercase;font-size:12px;letter-spacing:.12em;color:var(--brand);font-weight:800}.hero h1{font-size:40px;line-height:1.08;margin:9px 0 12px;letter-spacing:-.04em}.hero p{color:var(--muted);font-size:16px;line-height:1.65;margin:0;max-width:720px}.hero-side{padding:24px;display:flex;flex-direction:column;justify-content:space-between}.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.stat{padding:14px;border-radius:14px;background:var(--surface2)}.stat b{font-size:22px;display:block}.stat span{font-size:12px;color:var(--muted)}
+    .notice{margin-top:18px;padding:13px 14px;border-radius:14px;background:#eef2ff;color:#3730a3;font-size:13px;line-height:1.5}.notice strong{display:block;margin-bottom:2px}
+    .tabs{display:flex;gap:8px;margin:20px 0 14px;flex-wrap:wrap}.tab{border:1px solid var(--line);padding:9px 13px;border-radius:12px;background:#fff;color:var(--muted);font-weight:650}.tab.active{background:#151b2b;color:#fff;border-color:#151b2b}.panel{display:none}.panel.active{display:block}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}.col-7{grid-column:span 7}.col-5{grid-column:span 5}.col-8{grid-column:span 8}.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-12{grid-column:span 12}.card{padding:20px}.card h2,.card h3{margin:0 0 6px;letter-spacing:-.02em}.card h2{font-size:21px}.card h3{font-size:16px}.sub{color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:16px}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+    .field{display:flex;flex-direction:column;gap:7px;margin-bottom:13px}.field label{font-size:13px;font-weight:700}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;color:var(--text);outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#9b91ff;box-shadow:0 0 0 3px rgba(79,70,229,.09)}.field textarea{min-height:112px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.checks{display:flex;flex-wrap:wrap;gap:8px}.check{border:1px solid var(--line);border-radius:999px;padding:8px 11px;font-size:13px;background:#fff;cursor:pointer;user-select:none}.check.on{background:#eef2ff;color:#3730a3;border-color:#c7d2fe}.inline-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.muted{color:var(--muted)}.tiny{font-size:12px}
+    .persona-bar{display:flex;gap:8px;flex-wrap:wrap}.persona{border:1px solid var(--line);background:#fff;border-radius:14px;padding:9px 11px;display:flex;align-items:center;gap:8px}.persona.active{border-color:#a5b4fc;background:#eef2ff}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#dbeafe,#ede9fe);font-weight:800;color:#4338ca}.persona small{display:block;color:var(--muted)}
+    .trip,.match,.cluster,.request{border:1px solid var(--line);border-radius:15px;padding:14px;margin-bottom:10px;background:#fff}.trip-top,.match-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800}.pill.confirmed{background:#dcfce7;color:#166534}.pill.flexible{background:#fef3c7;color:#92400e}.pill.interested{background:#e0e7ff;color:#3730a3}.pill.high{background:#dcfce7;color:#166534}.pill.medium{background:#fef3c7;color:#92400e}.pill.low{background:#f3f4f6;color:#4b5563}.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.tag{font-size:11px;padding:5px 7px;border-radius:8px;background:var(--surface2);color:#475467}.trip-meta{font-size:12px;color:var(--muted);margin-top:5px}.score{font-size:24px;font-weight:850;letter-spacing:-.03em}.why{margin:10px 0 0;padding-left:18px;color:#475467;font-size:13px;line-height:1.55}.friction{color:#9a5b17}.divider{height:1px;background:var(--line);margin:15px 0}.density{display:grid;grid-template-columns:96px 1fr 44px;gap:10px;align-items:center;margin:9px 0}.bar{height:10px;border-radius:999px;background:#edf0f5;overflow:hidden}.bar>span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+    .empty{padding:26px 16px;text-align:center;border:1px dashed var(--line);border-radius:15px;color:var(--muted)}.toast{position:fixed;right:22px;bottom:22px;background:#111827;color:#fff;padding:12px 14px;border-radius:12px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.22s}.toast.show{opacity:1;transform:translateY(0)}
+    .modal-wrap{position:fixed;inset:0;background:rgba(15,23,42,.42);display:none;place-items:center;padding:20px;z-index:50}.modal-wrap.show{display:grid}.modal{width:min(560px,100%);background:#fff;border-radius:20px;padding:22px;box-shadow:0 30px 90px rgba(15,23,42,.28)}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.icon-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff}
+    .feature-list{display:grid;gap:10px}.feature{display:flex;gap:10px;align-items:flex-start}.dot{width:8px;height:8px;border-radius:50%;background:var(--brand);margin-top:7px;flex:none}.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#111827;color:#d1d5db;border-radius:12px;padding:12px;font-size:12px;overflow:auto}
+    footer{padding:28px 0 0;color:var(--muted);font-size:12px;text-align:center}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}.col-7,.col-5,.col-8,.col-4,.col-6{grid-column:span 12}.hero h1{font-size:34px}.topbar{height:auto;padding-top:12px;padding-bottom:12px;align-items:flex-start}.top-actions{flex-wrap:wrap;justify-content:flex-end}.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="topbar">
+      <div class="brand"><div class="mark">A</div><div>Travel Anchor <span class="muted tiny">P0</span></div></div>
+      <div class="top-actions">
+        <span class="chip" id="storageChip">Local prototype</span>
+        <button class="btn small" id="newPersonaBtn">+ Test persona</button>
+        <button class="btn small ghost" id="resetBtn">Reset demo</button>
+      </div>
+    </div>
+  </header>
+  <div class="shell">
+    <main>
+      <section class="hero">
+        <div class="hero-card">
+          <div class="eyebrow">AI-native future travel network</div>
+          <h1>Know <em>who</em> will be there before you decide <em>when</em> to go.</h1>
+          <p>Publish a future trip, discover overlapping travellers, understand compatibility, and connect only when it feels worth it. Independent by default — together when it makes sense.</p>
+          <div class="stat-row">
+            <div class="stat"><b id="statTravellers">0</b><span>travellers</span></div>
+            <div class="stat"><b id="statTrips">0</b><span>future trips</span></div>
+            <div class="stat"><b id="statMatches">0</b><span>live overlaps</span></div>
+          </div>
+        </div>
+        <div class="hero-side card">
+          <div>
+            <h2>Prototype architecture</h2>
+            <p class="sub">No backend yet. The entire multi-person test network lives in your browser.</p>
+            <div class="feature-list">
+              <div class="feature"><span class="dot"></span><div><b>Anonymous first</b><div class="tiny muted">No registration until a real connection is needed.</div></div></div>
+              <div class="feature"><span class="dot"></span><div><b>AI-ready matching</b><div class="tiny muted">Structured filters + semantic-style explanation.</div></div></div>
+              <div class="feature"><span class="dot"></span><div><b>Privacy by design</b><div class="tiny muted">No real-time location or exact accommodation.</div></div></div>
+            </div>
+          </div>
+          <div class="notice"><strong>Database note</strong>For this P0, localStorage is intentional. It makes multi-persona product testing fast. A shared production network later needs a backend such as Supabase/Postgres.</div>
+        </div>
+      </section>
+
+      <section class="card" style="margin-bottom:18px">
+        <div class="section-head"><div><h2>Active traveller</h2><div class="sub" style="margin:2px 0 0">Switch personas to simulate a network in one browser.</div></div></div>
+        <div class="persona-bar" id="personaBar"></div>
+      </section>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="home">Home</button>
+        <button class="tab" data-tab="profile">Profile</button>
+        <button class="tab" data-tab="trips">Trips</button>
+        <button class="tab" data-tab="discover">Discover</button>
+        <button class="tab" data-tab="connections">Connections</button>
+      </div>
+
+      <section class="panel active" id="panel-home">
+        <div class="grid">
+          <div class="card col-7">
+            <div class="section-head"><div><h2>Your next anchors</h2><div class="sub">Confirmed travellers who overlap with your future intent.</div></div><button class="btn small" data-go="discover">See all</button></div>
+            <div id="homeMatches"></div>
+          </div>
+          <div class="card col-5">
+            <div class="section-head"><div><h2>Your future</h2><div class="sub">Interested → Flexible → Confirmed.</div></div><button class="btn small primary" data-go="trips">+ Trip</button></div>
+            <div id="homeTrips"></div>
+          </div>
+          <div class="card col-12">
+            <h2>Destination pulse</h2><div class="sub">When is the network most dense?</div>
+            <div id="homeDensity"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-profile">
+        <div class="grid">
+          <div class="card col-7">
+            <h2>Tell us how you travel</h2>
+            <div class="sub">P0 uses a local semantic prototype. Later this adapter can call a low-cost model through a server-side endpoint.</div>
+            <div class="field"><label>Natural language travel profile</label><textarea id="profileText" placeholder="Example: I like slow travel, photography and hiking. I can walk 20 km, prefer a quiet evening over nightlife, and I don't need to spend the whole day with a travel buddy..."></textarea></div>
+            <div class="inline-actions"><button class="btn primary" id="analyzeBtn">Analyze profile</button><span class="tiny muted" id="analysisHint"></span></div>
+            <div class="divider"></div>
+            <div class="row">
+              <div class="field"><label>Nickname</label><input id="nicknameInput" /></div>
+              <div class="field"><label>Age range</label><select id="ageInput"><option>18–24</option><option>25–29</option><option>30–34</option><option>35–44</option><option>45+</option></select></div>
+            </div>
+            <div class="row">
+              <div class="field"><label>Gender</label><select id="genderInput"><option>Woman</option><option>Man</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
+              <div class="field"><label>Home city</label><input id="cityInput" placeholder="Shenzhen" /></div>
+            </div>
+            <div class="row">
+              <div class="field"><label>Travel pace</label><select id="paceInput"><option>Slow</option><option>Medium</option><option>Fast</option></select></div>
+              <div class="field"><label>Social intensity</label><select id="socialInput"><option>Low</option><option>Medium</option><option>High</option></select></div>
+            </div>
+            <div class="row">
+              <div class="field"><label>Independence</label><select id="independenceInput"><option>Low</option><option>Medium</option><option>High</option></select></div>
+              <div class="field"><label>Budget</label><select id="budgetInput"><option>Budget</option><option>Normal</option><option>Comfort</option></select></div>
+            </div>
+            <div class="field"><label>Interests</label><div class="checks" id="profileInterests"></div></div>
+            <div class="field"><label>Public social proof</label><input id="socialProofInput" placeholder="Xiaohongshu / Instagram / LinkedIn URL (optional)" /></div>
+            <button class="btn primary" id="saveProfileBtn">Save profile</button>
+          </div>
+          <div class="card col-5">
+            <h2>Profile completeness</h2><div class="sub">More context increases match confidence, not your “quality score”.</div>
+            <div id="profileCompleteness"></div>
+            <div class="divider"></div>
+            <h3>Product rule</h3>
+            <p class="sub">Compatibility is personal. Reliability can be global. We do not publish a “good person / bad person” score.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-trips">
+        <div class="grid">
+          <div class="card col-5">
+            <h2>Create trip</h2><div class="sub">You do not need a fixed itinerary.</div>
+            <div class="field"><label>Destination</label><input id="tripDestination" placeholder="Tokyo" /></div>
+            <div class="field"><label>Status</label><select id="tripStatus"><option>Interested</option><option>Flexible</option><option>Confirmed</option></select></div>
+            <div class="row">
+              <div class="field"><label>Start</label><input type="date" id="tripStart" /></div>
+              <div class="field"><label>End</label><input type="date" id="tripEnd" /></div>
+            </div>
+            <div class="field"><label>Flexibility</label><select id="tripFlex"><option>Fixed</option><option>±3 days</option><option>±1 week</option><option>±1 month</option></select></div>
+            <div class="field"><label>Activities</label><div class="checks" id="tripInterests"></div></div>
+            <div class="field"><label>Description</label><textarea id="tripDescription" placeholder="What kind of days would you like to share with others?"></textarea></div>
+            <button class="btn primary" id="createTripBtn">Publish trip</button>
+          </div>
+          <div class="card col-7">
+            <div class="section-head"><div><h2>My trips</h2><div class="sub">Future travel intent becomes the network supply.</div></div></div>
+            <div id="myTrips"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-discover">
+        <div class="grid">
+          <div class="card col-4">
+            <h2>Destination timeline</h2><div class="sub">See where and when density is forming.</div>
+            <div class="field"><label>Destination</label><select id="discoverDestination"></select></div>
+            <div id="densityList"></div>
+          </div>
+          <div class="card col-8">
+            <div class="section-head"><div><h2>Top matches</h2><div class="sub">Rule-based candidate selection + AI-ready explanations.</div></div><span class="chip" id="candidateCount"></span></div>
+            <div id="matchesList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-connections">
+        <div class="grid">
+          <div class="card col-7"><h2>Connection requests</h2><div class="sub">No infinite DM. A request must be accepted before contact details are revealed.</div><div id="requestsList"></div></div>
+          <div class="card col-5"><h2>Anonymous → claimed</h2><div class="sub">In P0, identity stays lightweight.</div><div class="code">anonymous session\n  ↓ profile + trips + matches\nfirst real connection intent\n  ↓\nclaim account (later: magic link)\n  ↓\ncontact details unlocked after accept</div><div class="notice"><strong>Current prototype</strong>Account claim is simulated locally. No email is sent.</div></div>
+        </div>
+      </section>
+      <footer>Travel Anchor P0 · local multi-persona product prototype · data stays in this browser</footer>
+    </main>
+  </div>
+</div>
+
+<div class="modal-wrap" id="personaModal"><div class="modal"><div class="modal-head"><h2 style="margin:0">Create test persona</h2><button class="icon-btn" data-close="personaModal">×</button></div><div class="row"><div class="field"><label>Name</label><input id="newPersonaName" placeholder="Alice" /></div><div class="field"><label>Gender</label><select id="newPersonaGender"><option>Woman</option><option>Man</option><option>Non-binary</option></select></div></div><div class="field"><label>One-line style</label><input id="newPersonaStyle" placeholder="Slow traveller, photography, hiking, independent" /></div><button class="btn primary" id="createPersonaConfirm">Create anonymous persona</button></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const KEY='travel-anchor-p0-v1';
+  const interests=['Photography','Hiking','Food','Roadtrip','Diving','Motorcycle','Citywalk','Nightlife','Museums','Nature'];
+  const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-5);
+  const future=(month,day)=>{const y=new Date().getFullYear()+1; return `${y}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`};
+  const seed=()=>{
+    const personas=[
+      {id:'p-charles',nickname:'Charles',age:'30–34',gender:'Man',city:'Shantou',pace:'Medium',social:'Medium',independence:'High',budget:'Normal',interests:['Photography','Hiking','Roadtrip','Motorcycle','Citywalk'],bio:'Independent traveller who likes meaningful encounters, photography and long walks. Happy to share a few days, not the entire trip.',socialProof:'xiaohongshu.com/user/profile/577a971c82ec39653297895b',claimed:false},
+      {id:'p-alice',nickname:'Alice',age:'25–29',gender:'Woman',city:'Shanghai',pace:'Slow',social:'Medium',independence:'High',budget:'Normal',interests:['Photography','Hiking','Food','Citywalk'],bio:'Slow travel, photo walks and nature. I like having my own space and meeting people for specific days.',socialProof:'',claimed:false},
+      {id:'p-claire',nickname:'Claire',age:'30–34',gender:'Woman',city:'Guangzhou',pace:'Medium',social:'Low',independence:'High',budget:'Normal',interests:['Hiking','Roadtrip','Nature','Photography'],bio:'Outdoors first, quiet evenings, strong hiker. Prefer a small group and independent plans.',socialProof:'',claimed:false},
+      {id:'p-bob',nickname:'Bob',age:'25–29',gender:'Man',city:'Beijing',pace:'Fast',social:'High',independence:'Medium',budget:'Budget',interests:['Food','Nightlife','Citywalk'],bio:'Fast-paced city trips, cheap eats, bars, meeting lots of people.',socialProof:'',claimed:false},
+      {id:'p-david',nickname:'David',age:'35–44',gender:'Man',city:'Hangzhou',pace:'Slow',social:'Medium',independence:'Medium',budget:'Comfort',interests:['Food','Museums','Roadtrip','Photography'],bio:'Comfort-focused slow traveller. Good food and museums matter more than ticking boxes.',socialProof:'',claimed:false}
+    ];
+    const trips=[
+      {id:'t1',userId:'p-charles',destination:'Tokyo',status:'Confirmed',start:future(4,12),end:future(4,20),flex:'Fixed',activities:['Photography','Motorcycle','Citywalk'],description:'A few Tokyo days, then flexible side trips. Looking for photo walks and maybe a ride.'},
+      {id:'t2',userId:'p-alice',destination:'Tokyo',status:'Flexible',start:future(4,1),end:future(5,10),flex:'±1 month',activities:['Photography','Food','Citywalk'],description:'Japan in spring. Dates can move if there are good people to meet.'},
+      {id:'t3',userId:'p-claire',destination:'Tokyo',status:'Confirmed',start:future(4,15),end:future(4,24),flex:'±3 days',activities:['Hiking','Nature','Photography'],description:'Tokyo plus day hikes. Quiet evenings.'},
+      {id:'t4',userId:'p-bob',destination:'Tokyo',status:'Confirmed',start:future(4,16),end:future(4,22),flex:'Fixed',activities:['Food','Nightlife','Citywalk'],description:'Food crawl and nightlife.'},
+      {id:'t5',userId:'p-david',destination:'Tokyo',status:'Interested',start:future(4,1),end:future(5,31),flex:'±1 month',activities:['Food','Museums','Photography'],description:'Considering Japan during spring.'},
+      {id:'t6',userId:'p-charles',destination:'Bali',status:'Flexible',start:future(6,1),end:future(6,30),flex:'±1 week',activities:['Diving','Photography','Nature'],description:'A month-ish base for slow travel and creator experiments.'},
+      {id:'t7',userId:'p-claire',destination:'Bali',status:'Interested',start:future(6,1),end:future(7,15),flex:'±1 month',activities:['Diving','Nature'],description:'Could join if the timing works.'}
+    ];
+    return {activeId:'p-charles',personas,trips,connections:[]};
+  };
+  let state=load();
+  function load(){try{const x=JSON.parse(localStorage.getItem(KEY)); if(x&&x.personas&&x.trips)return x}catch(e){} return seed()}
+  function save(){localStorage.setItem(KEY,JSON.stringify(state));renderAll()}
+  const active=()=>state.personas.find(p=>p.id===state.activeId)||state.personas[0];
+  const person=id=>state.personas.find(p=>p.id===id);
+  const personTrips=id=>state.trips.filter(t=>t.userId===id);
+  const days=(a,b)=>Math.max(0,Math.floor((new Date(b)-new Date(a))/86400000)+1);
+  const overlap=(a,b)=>{const s=new Date(Math.max(new Date(a.start),new Date(b.start)));const e=new Date(Math.min(new Date(a.end),new Date(b.end)));return e>=s?days(s,e):0};
+  const pct=(a,b)=>a===b?1:0.45;
+  function completeness(p){let n=0,total=9; ['nickname','age','gender','city','bio','pace','social','independence','budget'].forEach(k=>{if(p[k])n++}); if((p.interests||[]).length>=3)n+=1,total+=1; if(p.socialProof)n+=1,total+=1; return Math.round(n/total*100)}
+  function candidateTrips(){const me=active(),myTrips=personTrips(me.id);const others=state.trips.filter(t=>t.userId!==me.id);const out=[];for(const mt of myTrips){for(const ot of others){if(mt.destination.toLowerCase()!==ot.destination.toLowerCase())continue;const od=overlap(mt,ot);if(!od && mt.status!=='Interested'&&mt.status!=='Flexible')continue;out.push({myTrip:mt,otherTrip:ot,overlapDays:od})}}return out}
+  function matchScore(me,other,myTrip,otherTrip,od){
+    const actA=new Set(myTrip.activities||[]),actB=new Set(otherTrip.activities||[]);const inter=[...actA].filter(x=>actB.has(x));const union=new Set([...actA,...actB]);const activity=union.size?inter.length/union.size:.5;
+    const maxTrip=Math.max(days(myTrip.start,myTrip.end),days(otherTrip.start,otherTrip.end),1);const time=Math.min(1,(od||1)/Math.min(maxTrip,7));
+    const pace=pct(me.pace,other.pace),social=pct(me.social,other.social),indep=pct(me.independence,other.independence),budget=pct(me.budget,other.budget);
+    const score=Math.round(100*(time*.25+activity*.22+pace*.14+social*.13+indep*.16+budget*.10));
+    const c=(completeness(me)+completeness(other))/2;const confidence=c>82?'High':c>62?'Medium':'Low';
+    const why=[];if(inter.length)why.push(`Shared interests: ${inter.slice(0,3).join(', ')}`);if(me.independence===other.independence)why.push(`Similar need for independence (${me.independence.toLowerCase()})`);if(me.pace===other.pace)why.push(`Travel pace is aligned (${me.pace.toLowerCase()})`);if(od)why.push(`${od} day${od>1?'s':''} of direct date overlap`);
+    const friction=[];if(me.pace!==other.pace)friction.push(`Different pace: you are ${me.pace.toLowerCase()}, they are ${other.pace.toLowerCase()}`);if(me.social!==other.social)friction.push(`Different social intensity`);if(me.budget!==other.budget)friction.push(`Budget style differs`);if(!inter.length)friction.push(`Few explicit shared activities`);
+    return {score,confidence,why:why.slice(0,4),friction:friction.slice(0,2)}
+  }
+  function rankedMatches(){const me=active();return candidateTrips().map(c=>{const other=person(c.otherTrip.userId);return {...c,other,...matchScore(me,other,c.myTrip,c.otherTrip,c.overlapDays)}}).sort((a,b)=>b.score-a.score)}
+  function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)}
+  function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+  function tripCard(t,editable=false){return `<div class="trip"><div class="trip-top"><div><b>${esc(t.destination)}</b><div class="trip-meta">${esc(t.start)} → ${esc(t.end)} · ${esc(t.flex)}</div></div><span class="pill ${t.status.toLowerCase()}">${t.status}</span></div><div class="tags">${(t.activities||[]).map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div>${t.description?`<div class="trip-meta" style="margin-top:9px">${esc(t.description)}</div>`:''}${editable?`<div class="inline-actions" style="margin-top:10px"><button class="btn small danger" data-delete-trip="${t.id}">Delete</button></div>`:''}</div>`}
+  function matchCard(m,compact=false){return `<div class="match"><div class="match-top"><div style="display:flex;gap:10px"><div class="avatar">${esc(m.other.nickname[0])}</div><div><b>${esc(m.other.nickname)}</b><div class="trip-meta">${esc(m.other.age)} · ${esc(m.other.city||'')}</div><div class="trip-meta">${esc(m.otherTrip.destination)} · ${esc(m.otherTrip.start)} → ${esc(m.otherTrip.end)}</div></div></div><div style="text-align:right"><div class="score">${m.score}%</div><span class="pill ${m.confidence.toLowerCase()}">${m.confidence} confidence</span></div></div><div class="tags">${(m.otherTrip.activities||[]).map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div>${compact?'':`<ul class="why">${m.why.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${m.friction.length?`<ul class="why friction">${m.friction.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}<div class="inline-actions" style="margin-top:10px"><button class="btn small primary" data-connect="${m.other.id}" data-trip="${m.otherTrip.id}">Request to connect</button>${m.other.socialProof?`<span class="tiny muted">Social proof provided</span>`:''}</div>`}</div>`}
+  function renderPersonas(){document.getElementById('personaBar').innerHTML=state.personas.map(p=>`<button class="persona ${p.id===state.activeId?'active':''}" data-persona="${p.id}"><span class="avatar">${esc(p.nickname[0])}</span><span><b>${esc(p.nickname)}</b><small>${esc(p.age)} · ${esc(p.gender)}</small></span></button>`).join('')}
+  function renderStats(){document.getElementById('statTravellers').textContent=state.personas.length;document.getElementById('statTrips').textContent=state.trips.length;document.getElementById('statMatches').textContent=rankedMatches().length}
+  function renderHome(){const ms=rankedMatches().slice(0,3);document.getElementById('homeMatches').innerHTML=ms.length?ms.map(m=>matchCard(m,true)).join(''):'<div class="empty">Create a trip to discover overlap.</div>';const ts=personTrips(active().id);document.getElementById('homeTrips').innerHTML=ts.length?ts.slice(0,3).map(t=>tripCard(t)).join(''):'<div class="empty">No future trip yet.</div>';renderDensity('homeDensity',bestDestination())}
+  function bestDestination(){const mine=personTrips(active().id);return mine[0]?.destination||state.trips[0]?.destination||'Tokyo'}
+  function densityData(dest){const trips=state.trips.filter(t=>t.destination.toLowerCase()===dest.toLowerCase()&&t.status==='Confirmed');if(!trips.length)return[];const dates=trips.flatMap(t=>[new Date(t.start),new Date(t.end)]).sort((a,b)=>a-b);const start=dates[0],end=dates[dates.length-1];const rows=[];for(let d=new Date(start);d<=end;d.setDate(d.getDate()+7)){const s=new Date(d),e=new Date(d);e.setDate(e.getDate()+6);let count=0;for(const t of trips){if(new Date(t.end)>=s&&new Date(t.start)<=e)count++}rows.push({label:`${s.toLocaleDateString(undefined,{month:'short',day:'numeric'})}–${e.toLocaleDateString(undefined,{month:'short',day:'numeric'})}`,count})}return rows}
+  function renderDensity(id,dest){const data=densityData(dest),max=Math.max(1,...data.map(x=>x.count));document.getElementById(id).innerHTML=data.length?`<div class="tiny muted" style="margin-bottom:10px">${esc(dest)} · confirmed traveller density</div>`+data.map(x=>`<div class="density"><span class="tiny">${x.label}</span><div class="bar"><span style="width:${Math.round(x.count/max*100)}%"></span></div><b>${x.count}</b></div>`).join(''):'<div class="empty">No confirmed cluster yet.</div>'}
+  function renderProfile(){const p=active();document.getElementById('profileText').value=p.bio||'';document.getElementById('nicknameInput').value=p.nickname||'';document.getElementById('ageInput').value=p.age||'25–29';document.getElementById('genderInput').value=p.gender||'Prefer not to say';document.getElementById('cityInput').value=p.city||'';document.getElementById('paceInput').value=p.pace||'Medium';document.getElementById('socialInput').value=p.social||'Medium';document.getElementById('independenceInput').value=p.independence||'Medium';document.getElementById('budgetInput').value=p.budget||'Normal';document.getElementById('socialProofInput').value=p.socialProof||'';renderChecks('profileInterests',p.interests||[],()=>{});const c=completeness(p);document.getElementById('profileCompleteness').innerHTML=`<div class="score">${c}%</div><div class="bar" style="margin:8px 0 10px"><span style="width:${c}%"></span></div><div class="tiny muted">${c>80?'High':'Medium'} match confidence potential. More detail improves certainty, not your public reputation.</div>`}
+  function renderChecks(id,selected){document.getElementById(id).innerHTML=interests.map(x=>`<span class="check ${selected.includes(x)?'on':''}" data-check="${esc(x)}" data-check-root="${id}">${esc(x)}</span>`).join('')}
+  function readChecks(id){return [...document.querySelectorAll(`#${id} .check.on`)].map(x=>x.dataset.check)}
+  function renderTrips(){const ts=personTrips(active().id);document.getElementById('myTrips').innerHTML=ts.length?ts.map(t=>tripCard(t,true)).join(''):'<div class="empty">Publish your first future travel intent.</div>';renderChecks('tripInterests',[])}
+  function renderDiscover(){const dests=[...new Set(state.trips.map(t=>t.destination))].sort();const sel=document.getElementById('discoverDestination');const old=sel.value||bestDestination();sel.innerHTML=dests.map(d=>`<option>${esc(d)}</option>`).join('');sel.value=dests.includes(old)?old:dests[0]||'';renderDensity('densityList',sel.value);const ms=rankedMatches().filter(m=>!sel.value||m.otherTrip.destination===sel.value);document.getElementById('candidateCount').textContent=`${ms.length} candidates`;document.getElementById('matchesList').innerHTML=ms.length?ms.map(m=>matchCard(m)).join(''):'<div class="empty">No compatible overlap in this destination yet.</div>'}
+  function renderConnections(){const me=active();const cs=state.connections.filter(c=>c.from===me.id||c.to===me.id);document.getElementById('requestsList').innerHTML=cs.length?cs.map(c=>{const other=person(c.from===me.id?c.to:c.from);const incoming=c.to===me.id&&c.status==='Requested';return `<div class="request"><div style="display:flex;justify-content:space-between;gap:10px"><div><b>${esc(other.nickname)}</b><div class="tiny muted">${c.from===me.id?'You requested':'Requested you'} · ${esc(c.intent)}</div></div><span class="pill ${c.status==='Accepted'?'high':'medium'}">${esc(c.status)}</span></div>${incoming?`<div class="inline-actions" style="margin-top:10px"><button class="btn small primary" data-accept="${c.id}">Accept</button><button class="btn small" data-decline="${c.id}">Decline</button></div>`:''}${c.status==='Accepted'?`<div class="notice"><strong>Connected</strong>In production this is where user-approved contact details would unlock.</div>`:''}</div>`}).join(''):'<div class="empty">No connection requests yet.</div>'}
+  function renderAll(){renderPersonas();renderStats();renderHome();renderProfile();renderTrips();renderDiscover();renderConnections()}
+  function saveProfile(){const p=active();Object.assign(p,{nickname:document.getElementById('nicknameInput').value.trim()||p.nickname,age:document.getElementById('ageInput').value,gender:document.getElementById('genderInput').value,city:document.getElementById('cityInput').value.trim(),pace:document.getElementById('paceInput').value,social:document.getElementById('socialInput').value,independence:document.getElementById('independenceInput').value,budget:document.getElementById('budgetInput').value,interests:readChecks('profileInterests'),bio:document.getElementById('profileText').value.trim(),socialProof:document.getElementById('socialProofInput').value.trim()});save();toast('Profile saved')}
+  function analyzeProfile(){const txt=document.getElementById('profileText').value.toLowerCase();const set=(id,v)=>document.getElementById(id).value=v;if(/slow|relax|佛系|慢/.test(txt))set('paceInput','Slow');else if(/fast|packed|特种兵|赶/.test(txt))set('paceInput','Fast');else set('paceInput','Medium');if(/alone|space|independent|各玩各|独处|独立/.test(txt))set('independenceInput','High');if(/party|bar|nightlife|夜店|酒吧/.test(txt))set('socialInput','High');else if(/quiet|small group|安静|少数/.test(txt))set('socialInput','Low');const map={Photography:/photo|camera|摄影|拍照/,Hiking:/hike|walk|徒步|爬山/,Food:/food|restaurant|吃|美食/,Roadtrip:/roadtrip|drive|自驾/,Diving:/dive|diving|潜水/,Motorcycle:/motor|bike|摩托/,Citywalk:/citywalk|city walk|城市/,Nightlife:/nightlife|bar|club|酒吧|夜店/,Museums:/museum|gallery|博物馆|美术馆/,Nature:/nature|mountain|beach|自然|海|山/};const selected=Object.entries(map).filter(([,re])=>re.test(txt)).map(([k])=>k);renderChecks('profileInterests',selected);document.getElementById('analysisHint').textContent='Structured locally from your text — replaceable with a small LLM adapter later.';toast('Profile analyzed locally')}
+  function createTrip(){const p=active();const dest=document.getElementById('tripDestination').value.trim();const start=document.getElementById('tripStart').value,end=document.getElementById('tripEnd').value;if(!dest||!start||!end){toast('Destination and dates are required for this prototype');return}state.trips.push({id:'t-'+uid(),userId:p.id,destination:dest,status:document.getElementById('tripStatus').value,start,end,flex:document.getElementById('tripFlex').value,activities:readChecks('tripInterests'),description:document.getElementById('tripDescription').value.trim()});save();document.getElementById('tripDestination').value='';document.getElementById('tripDescription').value='';toast('Trip published')}
+  function connectTo(userId,tripId){const me=active();if(state.connections.some(c=>((c.from===me.id&&c.to===userId)||(c.from===userId&&c.to===me.id))&&c.tripId===tripId)){toast('Connection already exists');return}state.connections.push({id:'c-'+uid(),from:me.id,to:userId,tripId,intent:'Walk a segment',status:'Requested',createdAt:new Date().toISOString()});save();toast('Connection request sent')}
+  function createPersona(){const name=document.getElementById('newPersonaName').value.trim()||'Traveller';const gender=document.getElementById('newPersonaGender').value;const style=document.getElementById('newPersonaStyle').value.trim();const p={id:'p-'+uid(),nickname:name,age:'25–29',gender,city:'',pace:/slow|慢/i.test(style)?'Slow':/fast|快/i.test(style)?'Fast':'Medium',social:'Medium',independence:/independent|独立/i.test(style)?'High':'Medium',budget:'Normal',interests:interests.filter(x=>new RegExp(x,'i').test(style)),bio:style,socialProof:'',claimed:false};state.personas.push(p);state.activeId=p.id;save();closeModal('personaModal');toast('Anonymous test persona created')}
+  function openModal(id){document.getElementById(id).classList.add('show')}function closeModal(id){document.getElementById(id).classList.remove('show')}
+  function go(tab){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===tab));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===`panel-${tab}`));window.scrollTo({top:180,behavior:'smooth'})}
+  document.addEventListener('click',e=>{
+    const t=e.target;if(t.matches('.tab'))go(t.dataset.tab);if(t.dataset.go)go(t.dataset.go);if(t.dataset.persona){state.activeId=t.dataset.persona;save()}if(t.dataset.check){t.classList.toggle('on')}if(t.dataset.connect)connectTo(t.dataset.connect,t.dataset.trip);if(t.dataset.deleteTrip){state.trips=state.trips.filter(x=>x.id!==t.dataset.deleteTrip);save();toast('Trip deleted')}if(t.dataset.accept){const c=state.connections.find(x=>x.id===t.dataset.accept);if(c)c.status='Accepted';save();toast('Connection accepted')}if(t.dataset.decline){const c=state.connections.find(x=>x.id===t.dataset.decline);if(c)c.status='Declined';save()}if(t.dataset.close)closeModal(t.dataset.close)
+  });
+  document.getElementById('newPersonaBtn').onclick=()=>openModal('personaModal');document.getElementById('createPersonaConfirm').onclick=createPersona;document.getElementById('resetBtn').onclick=()=>{if(confirm('Reset all local demo data?')){state=seed();save();toast('Demo reset')}};document.getElementById('saveProfileBtn').onclick=saveProfile;document.getElementById('analyzeBtn').onclick=analyzeProfile;document.getElementById('createTripBtn').onclick=createTrip;document.getElementById('discoverDestination').onchange=e=>{renderDensity('densityList',e.target.value);renderDiscover()};
+  renderAll();
+})();
+</script>
+</body>
+</html>
